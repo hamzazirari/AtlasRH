@@ -100,4 +100,20 @@ public class EmployeeService {
             if (requestDTO.getManagerId().equals(id)) {
                 throw new ConflictException("Un employé ne peut pas être son propre manager");
             }
-            manager = employeeRepository.findById(requestDTO.getMa
+            manager = employeeRepository.findById(requestDTO.getManagerId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Manager introuvable avec l'id : " + requestDTO.getManagerId()));
+        }
+
+        employee.setMatricule(requestDTO.getMatricule());
+        employee.setLastName(requestDTO.getLastName());
+        employee.setFirstName(requestDTO.getFirstName());
+        employee.setEmail(requestDTO.getEmail());
+        employee.setJobTitle(requestDTO.getJobTitle());
+        employee.setHireDate(requestDTO.getHireDate());
+        employee.setDepartment(department);
+        employee.setManager(manager);
+
+        Employee updated = employeeRepository.save(employee);
+        return employeeMapper.toDto(updated);
+    }
+}
