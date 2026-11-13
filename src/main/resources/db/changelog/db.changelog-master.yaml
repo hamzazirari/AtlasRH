@@ -5,3 +5,7 @@ databaseChangeLog:
       file: db/changelog/changes/002-create-employee-table.yaml
   - include:
       file: db/changelog/changes/003-create-contract-table.yaml
+  - include:
+      file: db/changelog/changes/004-create-leave-type-table.yaml
+  - include:
+      file: db/changelog/changes/005-create-leave-request-table.yaml

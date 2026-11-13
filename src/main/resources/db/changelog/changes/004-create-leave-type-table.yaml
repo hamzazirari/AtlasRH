@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-leave-type-table
+      author: safiy
+      changes:
+        - createTable:
+            tableName: leave_type
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: days_per_year
+                  type: INT
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: leave_type
+            columns:
+              - column: { name: name, value: "ANNUEL" }
+              - column: { name: days_per_year, valueNumeric: 25 }
+        - insert:
+            tableName: leave_type
+            columns:
+              - column: { name: name, value: "EXCEPTIONNEL" }
+              - column: { name: days_per_year, valueNumeric: 5 }
