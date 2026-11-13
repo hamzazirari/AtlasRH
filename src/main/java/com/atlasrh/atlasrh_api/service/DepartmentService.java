@@ -1,8 +1,10 @@
 package com.atlasrh.atlasrh_api.service;
 
 import com.atlasrh.atlasrh_api.dto.DepartmentDTO;
+import com.atlasrh.atlasrh_api.dto.DepartmentWithActiveEmployeesDTO;
 import com.atlasrh.atlasrh_api.dto.DepartmentRequestDTO;
 import com.atlasrh.atlasrh_api.entity.Department;
+import com.atlasrh.atlasrh_api.enums.EmployeeStatus;
 import com.atlasrh.atlasrh_api.exception.ConflictException;
 import com.atlasrh.atlasrh_api.exception.ResourceNotFoundException;
 import com.atlasrh.atlasrh_api.mapper.DepartmentMapper;

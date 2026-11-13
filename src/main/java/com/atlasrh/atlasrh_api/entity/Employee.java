@@ -1,5 +1,7 @@
 package com.atlasrh.atlasrh_api.entity;
 
+import com.atlasrh.atlasrh_api.enums.ContractType;
+import com.atlasrh.atlasrh_api.enums.EmployeeStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +44,10 @@ public class Employee {
     @Column(name = "hire_date", nullable = false)
     private LocalDate hireDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private EmployeeStatus status;
+
     @ManyToOne
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -49,6 +55,8 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private Employee manager;
+
+
 
     @OneToMany(mappedBy = "manager")
     @Builder.Default
