@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.atlasrh.atlasrh_api.exception.ConflictException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.atlasrh.atlasrh_api.exception.ResourceNotFoundException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -78,5 +80,31 @@ class DepartmentServiceTest {
                 .hasMessageContaining("existe déjà");
 
         verify(departmentRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldReturnDepartmentWhenIdExists() {
+        // Given
+        when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+        when(departmentMapper.toDto(department)).thenReturn(departmentDTO);
+
+        // When
+        DepartmentDTO result = departmentService.getById(1L);
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getName()).isEqualTo("IT");
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenIdDoesNotExist() {
+        // Given
+        when(departmentRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThatThrownBy(() -> departmentService.getById(99L))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("introuvable");
     }
 }
