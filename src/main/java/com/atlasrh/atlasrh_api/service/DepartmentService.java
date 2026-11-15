@@ -4,6 +4,7 @@ import com.atlasrh.atlasrh_api.dto.DepartmentDTO;
 import com.atlasrh.atlasrh_api.dto.DepartmentWithActiveEmployeesDTO;
 import com.atlasrh.atlasrh_api.dto.DepartmentRequestDTO;
 import com.atlasrh.atlasrh_api.entity.Department;
+import com.atlasrh.atlasrh_api.entity.Employee;
 import com.atlasrh.atlasrh_api.enums.EmployeeStatus;
 import com.atlasrh.atlasrh_api.exception.ConflictException;
 import com.atlasrh.atlasrh_api.exception.ResourceNotFoundException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
