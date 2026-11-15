@@ -15,6 +15,9 @@ import com.atlasrh.atlasrh_api.exception.ConflictException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.atlasrh.atlasrh_api.exception.ResourceNotFoundException;
 import java.util.Optional;
+import com.atlasrh.atlasrh_api.entity.Employee;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -151,5 +154,33 @@ class DepartmentServiceTest {
                 .isInstanceOf(ConflictException.class);
 
         verify(departmentRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldDeleteDepartmentWhenItHasNoEmployees() {
+        // Given
+        department.setEmployees(new ArrayList<>());
+        when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+
+        // When
+        departmentService.delete(1L);
+
+        // Then
+        verify(departmentRepository, times(1)).delete(department);
+    }
+
+    @Test
+    void shouldThrowConflictWhenDeletingDepartmentWithEmployees() {
+        // Given
+        Employee employee = Employee.builder().id(1L).build();
+        department.setEmployees(List.of(employee));
+        when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+
+        // When / Then
+        assertThatThrownBy(() -> departmentService.delete(1L))
+                .isInstanceOf(ConflictException.class)
+                .hasMessageContaining("employés");
+
+        verify(departmentRepository, never()).delete(any());
     }
 }
