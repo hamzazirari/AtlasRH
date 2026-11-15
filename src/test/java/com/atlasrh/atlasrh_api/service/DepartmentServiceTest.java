@@ -107,4 +107,49 @@ class DepartmentServiceTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("introuvable");
     }
+
+
+    @Test
+    void shouldUpdateDepartmentWhenNameIsAvailable() {
+        // Given
+        DepartmentRequestDTO updateRequest = DepartmentRequestDTO.builder()
+                .name("IT Updated")
+                .description("Nouvelle description")
+                .build();
+
+        when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+        when(departmentRepository.findByName("IT Updated")).thenReturn(Optional.empty());
+        when(departmentRepository.save(department)).thenReturn(department);
+        when(departmentMapper.toDto(department)).thenReturn(departmentDTO);
+
+        // When
+        DepartmentDTO result = departmentService.update(1L, updateRequest);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(departmentRepository, times(1)).save(department);
+    }
+
+    @Test
+    void shouldThrowConflictWhenUpdatingToExistingNameOfAnotherDepartment() {
+        // Given
+        DepartmentRequestDTO updateRequest = DepartmentRequestDTO.builder()
+                .name("RH")
+                .description("desc")
+                .build();
+
+        Department anotherDepartment = Department.builder()
+                .id(2L)
+                .name("RH")
+                .build();
+
+        when(departmentRepository.findById(1L)).thenReturn(Optional.of(department));
+        when(departmentRepository.findByName("RH")).thenReturn(Optional.of(anotherDepartment));
+
+        // When / Then
+        assertThatThrownBy(() -> departmentService.update(1L, updateRequest))
+                .isInstanceOf(ConflictException.class);
+
+        verify(departmentRepository, never()).save(any());
+    }
 }
