@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.atlasrh.atlasrh_api.exception.ConflictException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -53,18 +55,28 @@ class DepartmentServiceTest {
 
     @Test
     void shouldCreateDepartmentWhenNameDoesNotExist() {
-        // Given
+
         when(departmentRepository.existsByName("IT")).thenReturn(false);
         when(departmentMapper.toEntity(requestDTO)).thenReturn(department);
         when(departmentRepository.save(department)).thenReturn(department);
         when(departmentMapper.toDto(department)).thenReturn(departmentDTO);
 
-        // When
         DepartmentDTO result = departmentService.create(requestDTO);
 
-        // Then
         assertThat(result).isNotNull();
         assertThat(result.getName()).isEqualTo("IT");
         verify(departmentRepository, times(1)).save(department);
+    }
+
+    @Test
+    void shouldThrowConflictExceptionWhenNameAlreadyExists() {
+        when(departmentRepository.existsByName("IT")).thenReturn(true);
+
+
+        assertThatThrownBy(() -> departmentService.create(requestDTO))
+                .isInstanceOf(ConflictException.class)
+                .hasMessageContaining("existe déjà");
+
+        verify(departmentRepository, never()).save(any());
     }
 }
